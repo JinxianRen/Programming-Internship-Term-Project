@@ -10,6 +10,7 @@ const char *weapons[3] = {"sword", "bomb", "arrow"};
 
 int total[2], need[5], initial_attack[5], order[2] = {0}, number[2];
 int now_time = 0, loyalty_minus, arrow_attack, city_num;
+bool game_over = 0;
 
 class sword
 {
@@ -156,17 +157,20 @@ private:
   int life;
   int winner;
   int last_winner;
-  bool is_head;
 
 public:
+  bool is_head;
   worriors *warr[2];
+  worriors *temp_warr[2];
   city()
   {
     last_winner = winner = color = -1;
     life = 0;
     warr[0] = warr[1] = NULL;
+    temp_warr[0] = temp_warr[1] = NULL;
   }
   ~city() {}
+  void go(city *next, int _color);
 
 } city[22];
 void created() //司令部生成士兵，因为只在司令部生成所以全局函数
@@ -189,25 +193,87 @@ void created() //司令部生成士兵，因为只在司令部生成所以全局
     }
   }
 }
-void escape(int id){//lion跑路
-  if(id==0){
-    if(city[id].warr[0]!=NULL&&city[id].warr[0]->nigero()){
-    printf("%03d:05 %s lion %d ran \n",now_time,part[0],city[id].warr[0]->id);
-    city[id].warr[0]=NULL;
+void escape(int id)
+{ // lion跑路
+  if (id == 0)
+  {
+    if (city[id].warr[0] != NULL && city[id].warr[0]->nigero())
+    {
+      printf("%03d:05 %s lion %d ran \n", now_time, part[0], city[id].warr[0]->id);
+      city[id].warr[0] = NULL;
     }
   }
-  else if(id==city_num+1){
-    if(city[id].warr[1]!=NULL&&city[id].warr[1]->nigero()){
-    printf("%03d:05 %s lion %d ran away\n",now_time,part[1],city[id].warr[1]->id);
-    city[id].warr[1]=NULL;
+  else if (id == city_num + 1)
+  {
+    if (city[id].warr[1] != NULL && city[id].warr[1]->nigero())
+    {
+      printf("%03d:05 %s lion %d ran away\n", now_time, part[1], city[id].warr[1]->id);
+      city[id].warr[1] = NULL;
     }
   }
-  for(int i=0;i<=1;i++){
-    if(city[id].warr[i]!=NULL&&city[id].warr[i]->nigero()){
-    printf("%03d:05 %s lion %d ran away\n",now_time,part[i],city[id].warr[i]->id);
-    city[id].warr[i]=NULL;
+  for (int i = 0; i <= 1; i++)
+  {
+    if (city[id].warr[i] != NULL && city[id].warr[i]->nigero())
+    {
+      printf("%03d:05 %s lion %d ran away\n", now_time, part[i], city[id].warr[i]->id);
+      city[id].warr[i] = NULL;
     }
   }
+}
+void city::go(city *next, int _color)
+{
+  temp_warr[_color] = next->warr[_color];
+  if (temp_warr[_color] != NULL && temp_warr[_color]->type == ICEMAN)
+  {
+    if ((_color == 0 && id % 2 == 0) || (_color == 1 && (city_num - id) % 2 == 1))
+    {
+      temp_warr[_color]->hp -= 9;
+      if (temp_warr[_color]->hp <= 0)
+        temp_warr[_color]->hp = 1;
+      temp_warr[_color]->attack += 20;
+    }
+  }
+}
+void go_ahead()
+{
+  if (city[city_num].warr[0] != NULL)
+    city[city_num + 1].go(&city[city_num], 0);
+  for (int i = city_num; i >= 1; i--)
+    city[i].go(&city[i - 1], 0);
+  if (city[1].warr[1] != NULL)
+    city[0].go(&city[1], 1);
+  for (int i = 1; i <= city_num; i++)
+    city[i].go(&city[i + 1], 1);
+}
+void reach()
+{
+  for (int i = 1; i <= city_num; i++)
+  {
+    for (int j = 0; j <= 1; j++)
+    {
+      city[i].warr[j] = city[i].temp_warr[j];
+      if (city[i].warr[j] != NULL)
+        printf("%03d:10 %s %s %d marched to city %d with %d elements and force %d\n", now_time, part[j], arms[city[i].warr[j]->type], city[i].warr[j]->id, i, city[i].warr[j]->hp, city[i].warr[j]->attack);
+    }
+  }
+  if (city[city_num + 1].temp_warr[0] != NULL)
+  {
+    printf("%03d:10 redd %s %d reached blue headquarter with %d elements and force %d\n", now_time, arms[city[city_num + 1].temp_warr[0]->type], city[city_num + 1].temp_warr[0]->id, city[city_num + 1].temp_warr[0]->hp, city[city_num + 1].temp_warr[0]->attack);
+  }
+  if (city[0].temp_warr[1] != NULL)
+  {
+    printf("%03d:10 blue %s %d reached red headquarter with %d elements and force %d\n", now_time, arms[city[0].temp_warr[1]->type], city[0].temp_warr[1]->id, city[0].temp_warr[1]->hp, city[0].temp_warr[1]->attack);
+    if (city[0].warr[1] != NULL)
+    {
+    }
+  }
+  if (city[city_num + 1].temp_warr[0] != NULL && city[city_num + 1].warr[0] != NULL)
+    printf("%03d:10 blue headquarter was taken", now_time);
+  if (city[0].temp_warr[1] != NULL && city[0].warr[1] != NULL)
+    printf("%03d:10 red headquarter was taken", now_time);
+  city[city_num + 1].temp_warr[0] = city[city_num + 1].warr[0];
+  city[0].temp_warr[1] = city[0].warr[1];
+  city[0].warr[0] = city[city_num + 1].warr[1] = NULL;
 }
 int main()
 {
@@ -225,22 +291,24 @@ int main()
       cin >> need[i];
     for (int i = 0; i < 5; i++)
       cin >> initial_attack[i];
+    city[0].is_head = city[city_num + 1].is_head = 1;
     while (1)
     {
-      created();//暴兵
-      if (now_min + 5 <= total_min)// lion跑路;
+      created();                    //暴兵
+      if (now_min + 5 <= total_min) // lion跑路;
       {
         now_min += 5;
-        for(int i=0;i<=city_num+1;i++)
-        escape(i);
-      } 
+        for (int i = 0; i <= city_num + 1; i++)
+          escape(i);
+      }
       else
         break;
       if (now_min + 5 <= total_min)
       {
         now_min += 5;
-        cout << now_min << endl
-             << "go" << endl;
+        go_ahead();
+        reach();
+
       } //武士前进,抵达司令部，司令部占领;
       else
         break;
