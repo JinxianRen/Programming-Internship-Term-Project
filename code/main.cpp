@@ -554,8 +554,10 @@ void citys::award() //战斗后奖励
 
 int main()
 {
+  #ifndef ONLINE_JUDGE
   freopen("in.txt", "r", stdin);
   freopen("out.txt", "w", stdout);
+  #endif
   int times;
   cin >> times;
   for (int t = 1; t <= times; t++)
@@ -665,5 +667,4 @@ int main()
     number[0]=number[1]=0;
     now_min = 0;
   }
-  system("pause");
 }
