@@ -260,6 +260,11 @@ void reach() //抵达
   {
     printf("%03d:10 blue %s %d reached red headquarter with %d elements and force %d\n", now_time, arms[city[0].temp_warr[1]->type], city[0].temp_warr[1]->id, city[0].temp_warr[1]->hp, city[0].temp_warr[1]->attack);
   }
+  if (city[0].temp_warr[1] != NULL && city[0].warr[1] != NULL)
+  {
+    printf("%03d:10 red headquarter was taken\n", now_time);
+    game_over = 1;
+  }
   for (int i = 1; i <= city_num; i++)
   {
     for (int j = 0; j <= 1; j++)
@@ -279,14 +284,13 @@ void reach() //抵达
     printf("%03d:10 blue headquarter was taken\n", now_time);
     game_over = 1;
   }
-  if (city[0].temp_warr[1] != NULL && city[0].warr[1] != NULL)
-  {
-    printf("%03d:10 red headquarter was taken\n", now_time);
-    game_over = 1;
-  }
-  city[city_num + 1].warr[0] = city[city_num + 1].temp_warr[0];
-  city[0].warr[1] = city[0].temp_warr[1];
+  
+  if(city[city_num + 1].temp_warr[0]!=NULL)city[city_num + 1].warr[0] = city[city_num + 1].temp_warr[0];
+  if(city[0].temp_warr[1]!=NULL)city[0].warr[1] = city[0].temp_warr[1];
   city[0].warr[0] = city[city_num + 1].warr[1] = NULL;
+  for(int i=0;i<=city_num+1;i++)
+  for(int j=0;j<=1;j++)
+  city[i].temp_warr[j]=NULL;
 }
 void citys::get_life() // 30分获取无人生命
 {
@@ -319,7 +323,7 @@ void shot(int i, int j, citys targ)
   }
   cout<<endl;
 }
-void shot_arrow() //射箭 未测试
+void shot_arrow() //射箭
 {
   for (int i = 1; i <= city_num; i++)
   {
@@ -369,7 +373,7 @@ void citys::tell(int _color) //报告武器
     printf("no weapon");
   printf("\n");
 }
-void use_bomb() //爆炸 未测试
+void use_bomb() //爆炸
 {
   for (int i = 1; i <= city_num; i++)
   {
@@ -388,10 +392,11 @@ void use_bomb() //爆炸 未测试
       delete city[i].warr[0];
       delete city[i].warr[1];
       city[i].warr[0] = city[i].warr[1] = NULL;
-      break;
+      continue;
     }
     if (city[i].warr[1 - turn]->type == NINJIA)
-      break;
+      continue;
+    if(demage>=city[i].warr[1-turn]->hp)continue;
     demage = city[i].warr[1 - turn]->attack / 2;
     if (city[i].warr[1 - turn]->_sword != NULL)
       demage += city[i].warr[1 - turn]->_sword->get_force();
@@ -402,7 +407,7 @@ void use_bomb() //爆炸 未测试
       delete city[i].warr[0];
       delete city[i].warr[1];
       city[i].warr[0] = city[i].warr[1] = NULL;
-      break;
+      continue;
     }
   }
 }
@@ -487,9 +492,9 @@ void citys::ttk() //塔塔开
   printf("attacked %s %s %d in city %d with %d elements and force %d\n", part[1 - turn], arms[warr[1 - turn]->type], warr[1 - turn]->id, id, warr[turn]->hp, warr[turn]->attack);
   //主动攻击
   int f_atk = warr[turn]->attack;
-  int lion_hp = 0;
+  int lion_hpan = 0;//见下方注释
   if (warr[1 - turn]->type == LION)
-    lion_hp = warr[1 - turn]->hp;
+    lion_hpan = warr[1 - turn]->hp;
   if (warr[turn]->_sword != NULL)
   { //有剑
     f_atk += warr[turn]->_sword->get_force();
@@ -504,11 +509,12 @@ void citys::ttk() //塔塔开
   if (warr[1 - turn]->hp <= 0)
   {
     printf("%03d:40 %s %s %d was killed in city %d\n", now_time, part[1 - turn], arms[warr[1 - turn]->type], warr[1 - turn]->id, id);
-    win(turn, turn, lion_hp);
+    win(turn, turn, lion_hpan);
     return;
   }
   if (warr[1 - turn]->type != NINJIA) //反击
   {
+    int lion_hp=0;//不要用同一个lion_hp,会出bug（可能是lion吃到其他lion的血量了？）
     int s_atk = warr[1 - turn]->attack / 2;
     if (warr[turn]->type == LION)
       lion_hp = warr[turn]->hp;
@@ -548,8 +554,8 @@ void citys::award() //战斗后奖励
 
 int main()
 {
-  freopen("in.txt", "r", stdin);
-  freopen("out.txt", "w", stdout);
+  //freopen("in.txt", "r", stdin);
+  //freopen("out.txt", "w", stdout);
   int times;
   cin >> times;
   for (int t = 1; t <= times; t++)
