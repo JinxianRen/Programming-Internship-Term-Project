@@ -208,7 +208,7 @@ void escape(int id) // lion跑路
   {
     if (city[id].warr[0] != NULL && city[id].warr[0]->nigero())
     {
-      printf("%03d:05 %s lion %d ran \n", now_time, part[0], city[id].warr[0]->id);
+      printf("%03d:05 %s lion %d ran away\n", now_time, part[0], city[id].warr[0]->id);
       city[id].warr[0] = NULL;
     }
   }
@@ -554,13 +554,13 @@ void citys::award() //战斗后奖励
 
 int main()
 {
-  //freopen("in.txt", "r", stdin);
-  //freopen("out.txt", "w", stdout);
+  freopen("in.txt", "r", stdin);
+  freopen("out.txt", "w", stdout);
   int times;
   cin >> times;
   for (int t = 1; t <= times; t++)
   {
-    cout << "Case: " << t << endl;
+    cout << "Case " << t <<":"<< endl;
     int now_min = 0;
     int initial_life, total_min;
     cin >> initial_life >> city_num >> arrow_attack >> loyalty_minus >> total_min;

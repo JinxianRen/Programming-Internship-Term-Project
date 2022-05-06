@@ -1,4 +1,4 @@
-Case: 1
+Case 1:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 178
@@ -236,7 +236,7 @@ Its morale is 11.05
 009:10 blue wolf 10 marched to city 6 with 19 elements and force 67
 009:10 red ninja 4 reached blue headquarter with 11 elements and force 23
 009:10 blue headquarter was taken
-Case: 2
+Case 2:
 000:50 20 elements in red headquarter
 000:50 20 elements in blue headquarter
 001:50 20 elements in red headquarter
@@ -269,7 +269,7 @@ Case: 2
 014:50 20 elements in blue headquarter
 015:50 20 elements in red headquarter
 015:50 20 elements in blue headquarter
-Case: 3
+Case 3:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 90
@@ -848,7 +848,7 @@ Its morale is 13.30
 016:40 blue dragon 12 fought back against red wolf 13 in city 5
 016:40 red wolf 13 was killed in city 5
 016:40 blue dragon 12 earned 10 elements for his headquarter
-Case: 4
+Case 4:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 90
@@ -910,7 +910,7 @@ Its morale is 7.20
 004:10 red ninja 4 marched to city 2 with 10 elements and force 5
 004:10 blue wolf 5 marched to city 2 with 10 elements and force 5
 004:10 red wolf 3 reached blue headquarter with 18 elements and force 5
-Case: 5
+Case 5:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 900
@@ -989,7 +989,7 @@ Its morale is 5.10
 004:10 blue wolf 5 marched to city 2 with 100 elements and force 5
 004:10 red wolf 3 reached blue headquarter with 93 elements and force 5
 004:10 blue headquarter was taken
-Case: 6
+Case 6:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 900
@@ -1828,7 +1828,7 @@ Its morale is 17.78
 016:30 blue dragon 17 earned 10 elements for his headquarter
 016:35 blue ninja 8 shot and killed red wolf 8
 016:38 red ninja 9 used a bomb and killed blue lion 6
-Case: 7
+Case 7:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 990
@@ -4945,7 +4945,7 @@ Its morale is 60.91
 050:00 red iceman 51 born
 050:00 blue lion 51 born
 Its loyalty is 2560
-Case: 8
+Case 8:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 890
@@ -10509,7 +10509,7 @@ Its morale is 10.06
 083:10 blue dragon 82 marched to city 18 with 190 elements and force 20
 083:10 blue ninja 83 marched to city 19 with 20 elements and force 50
 083:10 blue iceman 84 marched to city 20 with 30 elements and force 20
-Case: 9
+Case 9:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 890
@@ -15965,7 +15965,7 @@ Its morale is 49.02
 083:10 blue dragon 82 marched to city 18 with 80 elements and force 100
 083:10 blue ninja 83 marched to city 19 with 30 elements and force 20
 083:10 blue iceman 84 marched to city 20 with 30 elements and force 40
-Case: 10
+Case 10:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 950
@@ -19086,7 +19086,7 @@ Its morale is 39.22
 050:00 red iceman 51 born
 050:00 blue lion 51 born
 Its loyalty is 3786
-Case: 11
+Case 11:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 790
@@ -24402,7 +24402,7 @@ Its morale is 44.20
 083:10 blue dragon 82 marched to city 18 with 80 elements and force 150
 083:10 blue ninja 83 marched to city 19 with 30 elements and force 20
 083:10 blue iceman 84 marched to city 20 with 30 elements and force 140
-Case: 12
+Case 12:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 990
@@ -24469,7 +24469,7 @@ Its loyalty is 822
 005:10 blue lion 6 marched to city 1 with 10 elements and force 40
 005:10 red dragon 5 reached blue headquarter with 98 elements and force 20
 005:10 blue headquarter was taken
-Case: 13
+Case 13:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 890
@@ -25127,7 +25127,7 @@ Its morale is 2.23
 016:40 blue dragon 12 earned 10 elements for his headquarter
 016:40 blue ninja 13 attacked red dragon 10 in city 8 with 20 elements and force 50
 016:40 red dragon 10 fought back against blue ninja 13 in city 8
-Case: 14
+Case 14:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 900
@@ -30190,7 +30190,7 @@ Its morale is 58.22
 077:30 blue ninja 78 earned 10 elements for his headquarter
 077:35 red iceman 71 shot
 077:35 blue ninja 68 shot
-Case: 15
+Case 15:
 000:00 red iceman 1 born
 000:10 red iceman 1 marched to city 1 with 30 elements and force 20
 000:30 red iceman 1 earned 10 elements for his headquarter
@@ -30445,7 +30445,7 @@ Its loyalty is 520
 013:10 red wolf 3 marched to city 10 with 20 elements and force 30
 013:10 red lion 2 reached blue headquarter with 110 elements and force 110
 013:10 blue headquarter was taken
-Case: 16
+Case 16:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 900
@@ -31279,7 +31279,7 @@ Its morale is 20.32
 016:30 blue wolf 15 earned 10 elements for his headquarter
 016:30 blue lion 16 earned 10 elements for his headquarter
 016:30 blue dragon 17 earned 10 elements for his headquarter
-Case: 17
+Case 17:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 445
@@ -32168,7 +32168,7 @@ Its morale is 22.84
 016:35 red iceman 11 shot
 016:35 blue ninja 8 shot
 016:35 blue ninja 13 shot
-Case: 18
+Case 18:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 496
@@ -33014,7 +33014,7 @@ Its morale is 2014.00
 016:30 blue lion 16 earned 10 elements for his headquarter
 016:30 blue dragon 17 earned 10 elements for his headquarter
 016:35 blue ninja 8 shot
-Case: 19
+Case 19:
 000:50 0 elements in red headquarter
 000:50 0 elements in blue headquarter
 001:50 0 elements in red headquarter
@@ -33047,7 +33047,7 @@ Case: 19
 014:50 0 elements in blue headquarter
 015:50 0 elements in red headquarter
 015:50 0 elements in blue headquarter
-Case: 20
+Case 20:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 990
@@ -38104,7 +38104,7 @@ Its morale is 37.22
 077:35 red ninja 64 shot and killed blue iceman 74
 077:35 blue ninja 73 shot
 077:35 blue iceman 74 shot and killed red ninja 64
-Case: 21
+Case 21:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 0
@@ -38131,7 +38131,7 @@ Its loyalty is 0
 003:55 red iceman 1 has bomb
 004:00 red lion 2 born
 Its loyalty is 0
-004:05 red lion 2 ran 
+004:05 red lion 2 ran away
 004:10 red iceman 1 marched to city 5 with 82 elements and force 50
 004:30 red iceman 1 earned 50 elements for his headquarter
 004:50 50 elements in red headquarter
@@ -38602,7 +38602,7 @@ Its loyalty is 1480
 020:10 red ninja 4 marched to city 15 with 100 elements and force 100
 020:10 red wolf 3 reached blue headquarter with 10 elements and force 1
 020:10 blue headquarter was taken
-Case: 22
+Case 22:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 9
@@ -38625,7 +38625,7 @@ Its morale is 8.00
 001:40 blue dragon 2 was killed in city 1
 001:40 red lion 2 earned 10 elements for his headquarter
 001:40 red flag raised in city 1
-Case: 23
+Case 23:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 977
@@ -39470,7 +39470,7 @@ Its morale is 172.33
 016:40 red wolf 3 attacked blue dragon 12 in city 15 with 5 elements and force 34
 016:40 blue dragon 12 was killed in city 15
 016:40 red wolf 3 earned 10 elements for his headquarter
-Case: 24
+Case 24:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 294
@@ -40307,7 +40307,7 @@ Its loyalty is 1106
 020:30 blue iceman 19 earned 10 elements for his headquarter
 020:30 blue wolf 20 earned 10 elements for his headquarter
 020:30 blue lion 21 earned 10 elements for his headquarter
-Case: 25
+Case 25:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 100
@@ -40347,7 +40347,7 @@ Its loyalty is 100
 Its loyalty is 0
 004:00 blue dragon 2 born
 Its morale is 0.00
-004:05 red lion 2 ran 
+004:05 red lion 2 ran away
 004:10 red iceman 1 marched to city 5 with 182 elements and force 43
 004:10 blue lion 1 marched to city 16 with 200 elements and force 4
 004:10 blue dragon 2 marched to city 20 with 200 elements and force 1
@@ -41186,7 +41186,7 @@ Its morale is 0.21
 024:10 red wolf 3 marched to city 17 with 113 elements and force 5
 024:10 blue ninja 13 marched to city 17 with 200 elements and force 2
 024:10 blue iceman 14 marched to city 19 with 191 elements and force 23
-Case: 26
+Case 26:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 445
@@ -42075,7 +42075,7 @@ Its morale is 22.84
 016:35 red iceman 11 shot
 016:35 blue ninja 8 shot
 016:35 blue ninja 13 shot
-Case: 27
+Case 27:
 000:00 red iceman 1 born
 000:00 blue lion 1 born
 Its loyalty is 901
