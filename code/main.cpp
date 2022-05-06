@@ -166,7 +166,7 @@ public:
 
   worriors *warr[2];
   worriors *temp_warr[2];
-  citys()
+  void init()
   {
     last_winner = winner = color = -1;
     life = 0;
@@ -271,7 +271,7 @@ void reach() //抵达
   }
   if (city[city_num + 1].temp_warr[0] != NULL)
   {
-    printf("%03d:10 redd %s %d reached blue headquarter with %d elements and force %d\n", now_time, arms[city[city_num + 1].temp_warr[0]->type], city[city_num + 1].temp_warr[0]->id, city[city_num + 1].temp_warr[0]->hp, city[city_num + 1].temp_warr[0]->attack);
+    printf("%03d:10 red %s %d reached blue headquarter with %d elements and force %d\n", now_time, arms[city[city_num + 1].temp_warr[0]->type], city[city_num + 1].temp_warr[0]->id, city[city_num + 1].temp_warr[0]->hp, city[city_num + 1].temp_warr[0]->attack);
   }
 
   if (city[city_num + 1].temp_warr[0] != NULL && city[city_num + 1].warr[0] != NULL)
@@ -374,7 +374,7 @@ void use_bomb() //爆炸 未测试
   for (int i = 1; i <= city_num; i++)
   {
     if (city[i].warr[0] == NULL || city[i].warr[1] == NULL || city[i].warr[0]->hp == 0 || city[i].warr[1]->hp == 0)
-      break;
+      continue;
     int turn = 0;
     if (city[i].color == 1 || (city[i].color == -1 && city[i].id % 2 == 0))
       turn = 1;
@@ -428,6 +428,10 @@ void citys::win(int winner_color, int turn, int lion_hp)
   temp_life[winner_color] += life;
   life = 0;
   winner = winner_color;
+  if (winner == last_winner&&winner!=-1&&color!=winner){
+    color = winner;
+    printf("%03d:40 %s flag raised in city %d\n",now_time,part[winner],id);
+  }
 }
 void citys::draw(int turn)
 {
@@ -530,7 +534,7 @@ void citys::ttk() //塔塔开
   }
   draw(turn);
 }
-void citys::award() //战斗后奖励以及旗子
+void citys::award() //战斗后奖励
 {
   for (int i = 0; i <= 1; i++)
     if (warr[i] != NULL && warr[i]->is_winner && total[i] >= 8)
@@ -539,10 +543,7 @@ void citys::award() //战斗后奖励以及旗子
       warr[i]->hp += 8;
       warr[i]->is_winner=0;
     }
-  if (winner == last_winner){
-    color = winner;
-    printf("%03d:40 %s flag raised in city %d\n",now_time,part[winner],id);
-  }
+  
 }
 
 int main()
@@ -557,7 +558,9 @@ int main()
     int now_min = 0;
     int initial_life, total_min;
     cin >> initial_life >> city_num >> arrow_attack >> loyalty_minus >> total_min;
-    for(int i=0;i<=city_num+1;i++)city[i].id=i;
+    for(int i=0;i<=city_num+1;i++){
+      city[i].init();
+      city[i].id=i;}
     for (int i = 0; i <= 1; i++)
       total[i] = initial_life;
     for (int i = 0; i < 5; i++)
