@@ -171,7 +171,8 @@ public:
   }
   ~city() {}
   void go(city *next, int _color);
-
+  void produce_life(){life+=10;}
+  void get_life();
 } city[22];
 void created() //司令部生成士兵，因为只在司令部生成所以全局函数
 {
@@ -263,17 +264,32 @@ void reach()
   if (city[0].temp_warr[1] != NULL)
   {
     printf("%03d:10 blue %s %d reached red headquarter with %d elements and force %d\n", now_time, arms[city[0].temp_warr[1]->type], city[0].temp_warr[1]->id, city[0].temp_warr[1]->hp, city[0].temp_warr[1]->attack);
-    if (city[0].warr[1] != NULL)
-    {
-    }
   }
   if (city[city_num + 1].temp_warr[0] != NULL && city[city_num + 1].warr[0] != NULL)
-    printf("%03d:10 blue headquarter was taken", now_time);
+  {
+    printf("%03d:10 blue headquarter was taken\n", now_time);
+    game_over = 1;
+  }
   if (city[0].temp_warr[1] != NULL && city[0].warr[1] != NULL)
-    printf("%03d:10 red headquarter was taken", now_time);
-  city[city_num + 1].temp_warr[0] = city[city_num + 1].warr[0];
-  city[0].temp_warr[1] = city[0].warr[1];
+  {
+    printf("%03d:10 red headquarter was taken\n", now_time);
+    game_over = 1;
+  }
+  city[city_num + 1].warr[0] = city[city_num + 1].temp_warr[0];
+  city[0].warr[1] = city[0].temp_warr[1];
   city[0].warr[0] = city[city_num + 1].warr[1] = NULL;
+}
+void city::get_life()
+{
+	int turn=-1;
+	if (warr[0]!=NULL && warr[1]==NULL) turn=0;
+	if (warr[1]!=NULL && warr[0]==NULL) turn=1;
+	if (turn!=-1)
+	{
+		printf("%03d:30 %s %s %d earned %d elements for his headquarter\n",now_time,part[turn],arms[warr[turn]->type],warr[turn]->id,life);
+		total[turn]+=life;
+		life=0;
+	}
 }
 int main()
 {
@@ -303,18 +319,30 @@ int main()
       }
       else
         break;
-      if (now_min + 5 <= total_min)
+      if (now_min + 5 <= total_min) //武士前进,抵达司令部，司令部占领;
       {
         now_min += 5;
         go_ahead();
         reach();
-
-      } //武士前进,抵达司令部，司令部占领;
+      }
       else
         break;
-      if (now_min + 25 <= total_min)
+        if(game_over)break;
+      if (now_min + 10 <= total_min)//产出生命;
       {
-        now_min += 25;
+        now_min += 10;
+        for (int i=1;i<=city_num;i++)
+				city[i].produce_life();
+      } 
+      if (now_min + 10 <= total_min)//取走生命;
+      {
+        now_min += 10;
+        for (int i=1;i<=city_num;i++)
+				city[i].get_life();
+      } 
+      if (now_min + 5 <= total_min)
+      {
+        now_min += 5;
         cout << now_min << endl
              << "arror" << endl;
       } //武士放箭;
@@ -339,8 +367,8 @@ int main()
       if (now_min + 2 <= total_min)
       {
         now_min += 10;
-        cout << now_min << endl
-             << "head" << endl;
+        for (int i = 0; i <= 1; i++)
+          printf("%03d:50 %d elements in %s headquarter\n", now_time, total[i], part[i]);
       } //司令部报告;
       else
         break;
