@@ -154,15 +154,14 @@ public:
 
 class citys
 {
-private:
+public:
   int id;
-  int color;
   int life;
+  int color;
   int winner;
+  bool is_head;
   int last_winner;
 
-public:
-  bool is_head;
   worriors *warr[2];
   worriors *temp_warr[2];
   citys()
@@ -194,12 +193,11 @@ void created() //司令部生成士兵，因为只在司令部生成所以全局
         city[_id].warr[i] = new worriors(i, number[i], line[i][order[i]]);
       order[i]++;
       order[i] %= 5;
-      
     }
   }
 }
-void escape(int id)
-{ // lion跑路
+void escape(int id) // lion跑路
+{
   if (id == 0)
   {
     if (city[id].warr[0] != NULL && city[id].warr[0]->nigero())
@@ -225,7 +223,7 @@ void escape(int id)
     }
   }
 }
-void citys::go(citys *next, int _color)
+void citys::go(citys *next, int _color) //移动
 {
   temp_warr[_color] = next->warr[_color];
   if (temp_warr[_color] != NULL && temp_warr[_color]->type == ICEMAN)
@@ -239,7 +237,7 @@ void citys::go(citys *next, int _color)
     }
   }
 }
-void go_ahead()
+void go_ahead() //前进
 {
   if (city[city_num].warr[0] != NULL)
     city[city_num + 1].go(&city[city_num], 0);
@@ -250,7 +248,7 @@ void go_ahead()
   for (int i = 1; i <= city_num; i++)
     city[i].go(&city[i + 1], 1);
 }
-void reach()
+void reach() //抵达
 {
   for (int i = 1; i <= city_num; i++)
   {
@@ -283,7 +281,7 @@ void reach()
   city[0].warr[1] = city[0].temp_warr[1];
   city[0].warr[0] = city[city_num + 1].warr[1] = NULL;
 }
-void citys::get_life()
+void citys::get_life() // 30分获取无人生命
 {
   int turn = -1;
   if (warr[0] != NULL && warr[1] == NULL)
@@ -334,7 +332,7 @@ void shot_arrow() //射箭 未测试
     }
   }
 }
-void citys::tell(int _color)
+void citys::tell(int _color) //报告武器
 {
   bool have_wep = false;
   if (warr[_color] == NULL)
@@ -363,6 +361,44 @@ void citys::tell(int _color)
     printf("no weapon");
   printf("\n");
 }
+void use_bomb()
+{
+  for (int i = 1; i <= city_num; i++)
+  {
+    if (city[i].warr[0] == NULL || city[i].warr[1] == NULL || city[i].warr[0]->hp == 0 || city[i].warr[1]->hp == 0)
+      break;
+    int turn = 0;
+    if (city[i].color == 1 || (city[i].color == -1 && city[i].id % 2 == 0))
+      turn = 1;
+    int demage = city[i].warr[turn]->attack;
+    if (city[i].warr[turn]->_sword != NULL)
+      demage += city[i].warr[turn]->_sword->get_force();
+    if (city[i].warr[1 - turn]->hp <= demage && city[i].warr[1 - turn]->has_bomb)
+    {
+      printf("%03d:38 %s %s %d used a bomb and killed %s %s %d\n", now_time, part[1 - turn],
+             arms[city[i].warr[1 - turn]->type], city[i].warr[1 - turn]->id, part[turn], arms[city[i].warr[turn]->type], city[i].warr[turn]->id);
+      delete city[i].warr[0];
+      delete city[i].warr[1];
+      city[i].warr[0] = city[i].warr[1] = NULL;
+      break;
+    }
+    if (city[i].warr[1 - turn]->type == NINJIA)
+      break;
+    demage = city[i].warr[1 - turn]->attack / 2;
+    if (city[i].warr[1 - turn]->_sword != NULL)
+      demage += city[i].warr[1 - turn]->_sword->get_force();
+    if (city[i].warr[turn]->hp <= demage && city[i].warr[turn]->has_bomb)
+    {
+      printf("%03d:38 %s %s %d used a bomb and killed %s %s %d\n", now_time, part[turn],
+             arms[city[i].warr[turn]->type], city[i].warr[turn]->id, part[1 - turn], arms[city[i].warr[1 - turn]->type], city[i].warr[1 - turn]->id);
+      delete city[i].warr[0];
+      delete city[i].warr[1];
+      city[i].warr[0] = city[i].warr[1] = NULL;
+      break;
+    }
+  }
+}
+
 int main()
 {
   int times;
@@ -424,12 +460,11 @@ int main()
       }
       else
         break;
-      if (now_min + 3 <= total_min)
+      if (now_min + 3 <= total_min)//使用炸弹;
       {
         now_min += 3;
-        cout << now_min << endl
-             << "bomb" << endl;
-      } //使用炸弹;
+        use_bomb();
+      } 
       else
         break;
       if (now_min + 2 <= total_min)
@@ -440,21 +475,21 @@ int main()
       } //主动进攻，反击，战死，欢呼，获取生命，升旗;
       else
         break;
-      if (now_min + 2 <= total_min)//司令部报告;
+      if (now_min + 2 <= total_min) //司令部报告;
       {
         now_min += 10;
         for (int i = 0; i <= 1; i++)
           printf("%03d:50 %d elements in %s headquarter\n", now_time, total[i], part[i]);
-      } 
+      }
       else
         break;
-      if (now_min + 5 <= total_min)//武士报告
+      if (now_min + 5 <= total_min) //武士报告
       {
         now_min += 5;
         for (int j = 0; j <= 1; j++)
           for (int i = 0; i <= city_num + 1; i++)
             city[i].tell(j);
-      } 
+      }
       else
         break;
       now_min += 5;
