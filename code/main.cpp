@@ -12,6 +12,9 @@ int total[2], need[5], initial_attack[5], order[2] = {0}, number[2];
 int now_time = 0, loyalty_minus, arrow_attack, city_num;
 bool game_over = 0;
 
+void created();
+void shot_arrow();
+void escape(int id);
 class sword
 {
 private:
@@ -108,7 +111,7 @@ public:
   virtual void change_morale(int) {}
   virtual bool nigero() { return false; }
   virtual void change_loyalty() {}
-  friend class city;
+  friend class citys;
 }; //只有dragon和lion有特殊属性
 class dragon : public worriors
 {
@@ -149,7 +152,7 @@ public:
   void change_loyalty() { loyalty -= loyalty_minus; }
 };
 
-class city
+class citys
 {
 private:
   int id;
@@ -162,17 +165,18 @@ public:
   bool is_head;
   worriors *warr[2];
   worriors *temp_warr[2];
-  city()
+  citys()
   {
     last_winner = winner = color = -1;
     life = 0;
     warr[0] = warr[1] = NULL;
     temp_warr[0] = temp_warr[1] = NULL;
   }
-  ~city() {}
-  void go(city *next, int _color);
-  void produce_life(){life+=10;}
+  ~citys() {}
+  void go(citys *next, int _color);
+  void produce_life() { life += 10; }
   void get_life();
+  void tell(int _color);
 } city[22];
 void created() //司令部生成士兵，因为只在司令部生成所以全局函数
 {
@@ -180,7 +184,7 @@ void created() //司令部生成士兵，因为只在司令部生成所以全局
   {
     if (total[i] >= need[line[i][order[i]]])
     {
-
+      number[i]++;
       int _id = i == 0 ? 0 : (city_num + 1);
       if (line[i][order[i]] == DRAGON)
         city[_id].warr[i] = new dragon(i, number[i], line[i][order[i]]);
@@ -190,7 +194,7 @@ void created() //司令部生成士兵，因为只在司令部生成所以全局
         city[_id].warr[i] = new worriors(i, number[i], line[i][order[i]]);
       order[i]++;
       order[i] %= 5;
-      number[i]++;
+      
     }
   }
 }
@@ -221,7 +225,7 @@ void escape(int id)
     }
   }
 }
-void city::go(city *next, int _color)
+void citys::go(citys *next, int _color)
 {
   temp_warr[_color] = next->warr[_color];
   if (temp_warr[_color] != NULL && temp_warr[_color]->type == ICEMAN)
@@ -279,17 +283,85 @@ void reach()
   city[0].warr[1] = city[0].temp_warr[1];
   city[0].warr[0] = city[city_num + 1].warr[1] = NULL;
 }
-void city::get_life()
+void citys::get_life()
 {
-	int turn=-1;
-	if (warr[0]!=NULL && warr[1]==NULL) turn=0;
-	if (warr[1]!=NULL && warr[0]==NULL) turn=1;
-	if (turn!=-1)
-	{
-		printf("%03d:30 %s %s %d earned %d elements for his headquarter\n",now_time,part[turn],arms[warr[turn]->type],warr[turn]->id,life);
-		total[turn]+=life;
-		life=0;
-	}
+  int turn = -1;
+  if (warr[0] != NULL && warr[1] == NULL)
+    turn = 0;
+  if (warr[1] != NULL && warr[0] == NULL)
+    turn = 1;
+  if (turn != -1)
+  {
+    printf("%03d:30 %s %s %d earned %d elements for his headquarter\n", now_time, part[turn], arms[warr[turn]->type], warr[turn]->id, life);
+    total[turn] += life;
+    life = 0;
+  }
+}
+void shot(int i, int j, citys targ)
+{
+  printf("%03d:35 %s %s %d shot\n", now_time, part[j], arms[city[i].warr[j]->type], city[i].warr[j]->id);
+  targ.warr[1 - j]->hp -= city[i].warr[j]->_arrow->get_force();
+  city[i].warr[j]->_arrow->used();
+  if (city[i].warr[j]->_arrow->is_deserted())
+  {
+    delete city[i].warr[j]->_arrow;
+    city[i].warr[j]->_arrow = NULL;
+  }
+  if (targ.warr[1 - j]->hp <= 0)
+  {
+    targ.warr[1 - j]->hp = 0;
+    printf(" and killed %s %s %d\n", part[1 - j], arms[targ.warr[1 - j]->type], targ.warr[1 - j]->id);
+  }
+}
+void shot_arrow() //射箭 未测试
+{
+  for (int i = 1; i <= city_num; i++)
+  {
+    for (int j = 0; j <= 1; j++)
+    {
+      if (city[i].warr[j] == NULL)
+        break;
+      if (city[i].warr[j]->_arrow == NULL)
+        break;
+      if (j == 0 && city[i + 1].warr[1 - j] != NULL)
+      {
+        shot(i, j, city[i + 1]);
+      }
+      else if (j == 1 && city[i - 1].warr[1 - j] != NULL)
+      {
+        shot(i, j, city[i - 1]);
+      }
+    }
+  }
+}
+void citys::tell(int _color)
+{
+  bool have_wep = false;
+  if (warr[_color] == NULL)
+    return;
+  printf("%03d:55 %s %s %d has ", now_time, part[_color], arms[warr[_color]->type], warr[_color]->id);
+  if (warr[_color]->_arrow != NULL)
+  {
+    printf("arrow(%d)", warr[_color]->_arrow->get_used_time());
+    have_wep = true;
+  }
+  if (warr[_color]->has_bomb)
+  {
+    if (have_wep)
+      printf(",");
+    printf("bomb");
+    have_wep = true;
+  }
+  if (warr[_color]->_sword != NULL)
+  {
+    if (have_wep)
+      printf(",");
+    printf("sword(%d)", warr[_color]->_sword->get_force());
+    have_wep = true;
+  }
+  if (!have_wep)
+    printf("no weapon");
+  printf("\n");
 }
 int main()
 {
@@ -327,25 +399,29 @@ int main()
       }
       else
         break;
-        if(game_over)break;
-      if (now_min + 10 <= total_min)//产出生命;
+      if (game_over)
+        break;
+      if (now_min + 10 <= total_min) //产出生命;
       {
         now_min += 10;
-        for (int i=1;i<=city_num;i++)
-				city[i].produce_life();
-      } 
-      if (now_min + 10 <= total_min)//取走生命;
+        for (int i = 1; i <= city_num; i++)
+          city[i].produce_life();
+      }
+      else
+        break;
+      if (now_min + 10 <= total_min) //取走生命;
       {
         now_min += 10;
-        for (int i=1;i<=city_num;i++)
-				city[i].get_life();
-      } 
-      if (now_min + 5 <= total_min)
+        for (int i = 1; i <= city_num; i++)
+          city[i].get_life();
+      }
+      else
+        break;
+      if (now_min + 5 <= total_min) //武士放箭;
       {
         now_min += 5;
-        cout << now_min << endl
-             << "arror" << endl;
-      } //武士放箭;
+        shot_arrow();
+      }
       else
         break;
       if (now_min + 3 <= total_min)
@@ -364,20 +440,21 @@ int main()
       } //主动进攻，反击，战死，欢呼，获取生命，升旗;
       else
         break;
-      if (now_min + 2 <= total_min)
+      if (now_min + 2 <= total_min)//司令部报告;
       {
         now_min += 10;
         for (int i = 0; i <= 1; i++)
           printf("%03d:50 %d elements in %s headquarter\n", now_time, total[i], part[i]);
-      } //司令部报告;
+      } 
       else
         break;
-      if (now_min + 5 <= total_min)
+      if (now_min + 5 <= total_min)//武士报告
       {
         now_min += 5;
-        cout << now_min << endl
-             << "warrior" << endl;
-      } //武士报告
+        for (int j = 0; j <= 1; j++)
+          for (int i = 0; i <= city_num + 1; i++)
+            city[i].tell(j);
+      } 
       else
         break;
       now_min += 5;
