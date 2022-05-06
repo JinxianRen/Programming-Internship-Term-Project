@@ -256,6 +256,10 @@ void go_ahead() //前进
 }
 void reach() //抵达
 {
+  if (city[0].temp_warr[1] != NULL)
+  {
+    printf("%03d:10 blue %s %d reached red headquarter with %d elements and force %d\n", now_time, arms[city[0].temp_warr[1]->type], city[0].temp_warr[1]->id, city[0].temp_warr[1]->hp, city[0].temp_warr[1]->attack);
+  }
   for (int i = 1; i <= city_num; i++)
   {
     for (int j = 0; j <= 1; j++)
@@ -269,10 +273,7 @@ void reach() //抵达
   {
     printf("%03d:10 redd %s %d reached blue headquarter with %d elements and force %d\n", now_time, arms[city[city_num + 1].temp_warr[0]->type], city[city_num + 1].temp_warr[0]->id, city[city_num + 1].temp_warr[0]->hp, city[city_num + 1].temp_warr[0]->attack);
   }
-  if (city[0].temp_warr[1] != NULL)
-  {
-    printf("%03d:10 blue %s %d reached red headquarter with %d elements and force %d\n", now_time, arms[city[0].temp_warr[1]->type], city[0].temp_warr[1]->id, city[0].temp_warr[1]->hp, city[0].temp_warr[1]->attack);
-  }
+
   if (city[city_num + 1].temp_warr[0] != NULL && city[city_num + 1].warr[0] != NULL)
   {
     printf("%03d:10 blue headquarter was taken\n", now_time);
@@ -303,7 +304,7 @@ void citys::get_life() // 30分获取无人生命
 }
 void shot(int i, int j, citys targ)
 {
-  printf("%03d:35 %s %s %d shot\n", now_time, part[j], arms[city[i].warr[j]->type], city[i].warr[j]->id);
+  printf("%03d:35 %s %s %d shot", now_time, part[j], arms[city[i].warr[j]->type], city[i].warr[j]->id);
   targ.warr[1 - j]->hp -= city[i].warr[j]->_arrow->get_force();
   city[i].warr[j]->_arrow->used();
   if (city[i].warr[j]->_arrow->is_deserted())
@@ -314,8 +315,9 @@ void shot(int i, int j, citys targ)
   if (targ.warr[1 - j]->hp <= 0)
   {
     targ.warr[1 - j]->hp = 0;
-    printf(" and killed %s %s %d\n", part[1 - j], arms[targ.warr[1 - j]->type], targ.warr[1 - j]->id);
+    printf(" and killed %s %s %d", part[1 - j], arms[targ.warr[1 - j]->type], targ.warr[1 - j]->id);
   }
+  cout<<endl;
 }
 void shot_arrow() //射箭 未测试
 {
@@ -324,9 +326,9 @@ void shot_arrow() //射箭 未测试
     for (int j = 0; j <= 1; j++)
     {
       if (city[i].warr[j] == NULL)
-        break;
+        continue;
       if (city[i].warr[j]->_arrow == NULL)
-        break;
+        continue;
       if (j == 0 && city[i + 1].warr[1 - j] != NULL)
       {
         shot(i, j, city[i + 1]);
@@ -406,15 +408,17 @@ void use_bomb() //爆炸 未测试
 }
 void citys::win(int winner_color, int turn, int lion_hp)
 {
-  if (warr[winner_color]->type == WOLF)
+  if (warr[winner_color]->type == WOLF)//不能直接赋值，用new，因为要delete
   {
     if (warr[winner_color]->_sword == NULL && warr[1 - winner_color]->_sword != NULL)
-      warr[winner_color]->_sword = warr[1 - winner_color]->_sword;
+      warr[winner_color]->_sword =new sword(warr[1 - winner_color]->_sword->get_force());
     if (!warr[winner_color]->has_bomb && warr[1 - winner_color]->has_bomb)
       warr[winner_color]->has_bomb = true;
     if (warr[winner_color]->_arrow == NULL && warr[1 - winner_color]->_arrow != NULL)
-      warr[winner_color]->_arrow = warr[1 - winner_color]->_arrow;
+      warr[winner_color]->_arrow =new arrow(warr[1-winner_color]->_arrow->get_used_time(),warr[1-winner_color]->_arrow->get_force());
   }
+  delete warr[1-winner_color];
+  warr[1-winner_color]=NULL;
   warr[winner_color]->change_morale(1);
   if (winner_color == turn)
     warr[winner_color]->happy(id);
@@ -434,7 +438,7 @@ void citys::draw(int turn)
   warr[turn]->happy(id);
   winner = -1;
 }
-void citys::ttk()
+void citys::ttk() //塔塔开
 {
   if (warr[0] == NULL) //一个被射死，或者只有一个人
   {
@@ -515,6 +519,8 @@ void citys::ttk()
       }
     }
     warr[turn]->hp -= s_atk;
+    printf("%03d:40 %s %s %d fought back against %s %s %d in city %d\n",now_time,part[1-turn],
+			arms[warr[1-turn]->type],warr[1-turn]->id,part[turn],arms[warr[turn]->type],warr[turn]->id,id);
     if (warr[turn]->hp <= 0)
     {
       printf("%03d:40 %s %s %d was killed in city %d\n", now_time, part[turn], arms[warr[turn]->type], warr[turn]->id, id);
@@ -524,28 +530,34 @@ void citys::ttk()
   }
   draw(turn);
 }
-void citys::award()
+void citys::award() //战斗后奖励以及旗子
 {
   for (int i = 0; i <= 1; i++)
-    if (warr[i]!=NULL&&warr[i]->is_winner && total[i] >= 8)
+    if (warr[i] != NULL && warr[i]->is_winner && total[i] >= 8)
     {
       total[i] -= 8;
       warr[i]->hp += 8;
+      warr[i]->is_winner=0;
     }
-  if (winner == last_winner)
+  if (winner == last_winner){
     color = winner;
+    printf("%03d:40 %s flag raised in city %d\n",now_time,part[winner],id);
+  }
 }
 
 int main()
 {
+  freopen("in.txt", "r", stdin);
+  freopen("out.txt", "w", stdout);
   int times;
   cin >> times;
-  for (int t = 0; t < times; t++)
+  for (int t = 1; t <= times; t++)
   {
-    cout << "Case " << t << endl;
+    cout << "Case: " << t << endl;
     int now_min = 0;
     int initial_life, total_min;
     cin >> initial_life >> city_num >> arrow_attack >> loyalty_minus >> total_min;
+    for(int i=0;i<=city_num+1;i++)city[i].id=i;
     for (int i = 0; i <= 1; i++)
       total[i] = initial_life;
     for (int i = 0; i < 5; i++)
@@ -612,7 +624,7 @@ int main()
         for (int i = 1; i <= city_num; i++)
           city[i].award();
         for (int i = 0; i <= 2; i++)
-          total[i] += temp_life[i];
+          total[i] += temp_life[i],temp_life[i]=0;
 
       } //主动进攻，反击，战死，欢呼，获取生命，升旗;
       else
@@ -638,6 +650,11 @@ int main()
 
       now_time++;
     }
+    now_time = 0;
+    game_over = 0;
+    order[0]=order[1]=0;
+    number[0]=number[1]=0;
+    now_min = 0;
   }
   system("pause");
 }
