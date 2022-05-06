@@ -9,7 +9,7 @@ const char *arms[5] = {"dragon", "ninja", "iceman", "lion", "wolf"};
 const char *weapons[3] = {"sword", "bomb", "arrow"};
 
 int total[2], need[5], initial_attack[5], order[2] = {0}, number[2];
-int now_time = 0, loyalty_minus, arrow_attack, city_num;
+int now_time = 0, loyalty_minus, arrow_attack, city_num, temp_life[2];
 bool game_over = 0;
 
 void created();
@@ -50,6 +50,7 @@ public:
   sword *_sword;
   arrow *_arrow;
   bool has_bomb;
+  bool is_winner;
   worriors(int _color, int _id, int _type)
   {
     printf("%03d:00 %s %s %d born\n", now_time, part[_color], arms[_type], _id);
@@ -61,6 +62,7 @@ public:
     attack = initial_attack[_type];
     _sword = NULL;
     has_bomb = false;
+    is_winner = 0;
     _arrow = NULL;
     if (_type == DRAGON || _type == ICEMAN)
     {
@@ -176,6 +178,10 @@ public:
   void produce_life() { life += 10; }
   void get_life();
   void tell(int _color);
+  void ttk();
+  void win(int, int, int);
+  void draw(int);
+  void award();
 } city[22];
 void created() //司令部生成士兵，因为只在司令部生成所以全局函数
 {
@@ -361,7 +367,7 @@ void citys::tell(int _color) //报告武器
     printf("no weapon");
   printf("\n");
 }
-void use_bomb()
+void use_bomb() //爆炸 未测试
 {
   for (int i = 1; i <= city_num; i++)
   {
@@ -397,6 +403,137 @@ void use_bomb()
       break;
     }
   }
+}
+void citys::win(int winner_color, int turn, int lion_hp)
+{
+  if (warr[winner_color]->type == WOLF)
+  {
+    if (warr[winner_color]->_sword == NULL && warr[1 - winner_color]->_sword != NULL)
+      warr[winner_color]->_sword = warr[1 - winner_color]->_sword;
+    if (!warr[winner_color]->has_bomb && warr[1 - winner_color]->has_bomb)
+      warr[winner_color]->has_bomb = true;
+    if (warr[winner_color]->_arrow == NULL && warr[1 - winner_color]->_arrow != NULL)
+      warr[winner_color]->_arrow = warr[1 - winner_color]->_arrow;
+  }
+  warr[winner_color]->change_morale(1);
+  if (winner_color == turn)
+    warr[winner_color]->happy(id);
+  warr[winner_color]->is_winner = 1;
+  warr[winner_color]->hp += lion_hp;
+  printf("%03d:40 %s %s %d earned %d elements for his headquarter\n", now_time, part[winner_color], arms[warr[winner_color]->type], warr[winner_color]->id, life);
+  temp_life[winner_color] += life;
+  life = 0;
+  winner = winner_color;
+}
+void citys::draw(int turn)
+{
+  warr[0]->change_loyalty();
+  warr[1]->change_loyalty();
+  warr[0]->change_morale(-1);
+  warr[1]->change_morale(-1);
+  warr[turn]->happy(id);
+  winner = -1;
+}
+void citys::ttk()
+{
+  if (warr[0] == NULL) //一个被射死，或者只有一个人
+  {
+    if (warr[1] != NULL && warr[1]->hp == 0)
+    {
+      delete warr[1];
+      warr[1] = NULL;
+    }
+    return;
+  }
+  if (warr[1] == NULL)
+  {
+    if (warr[0]->hp == 0)
+    {
+      delete warr[0];
+      warr[0] = NULL;
+    }
+    return;
+  }
+  if (warr[0]->hp == 0 && warr[1]->hp == 0) //都被射死
+  {
+    delete warr[0];
+    delete warr[1];
+    warr[0] = warr[1] = NULL;
+    return;
+  }
+  last_winner = winner;
+  int turn = 0;
+  if (color == 1 || (color == -1 && id % 2 == 0))
+    turn = 1;
+  if (warr[0]->hp == 0)
+  {
+    win(1, turn, 0);
+    return;
+  }
+  if (warr[1]->hp == 0)
+  {
+    win(0, turn, 0);
+    return;
+  }
+  printf("%03d:40 %s %s %d ", now_time, part[turn], arms[warr[turn]->type], warr[turn]->id);
+  printf("attacked %s %s %d in city %d with %d elements and force %d\n", part[1 - turn], arms[warr[1 - turn]->type], warr[1 - turn]->id, id, warr[turn]->hp, warr[turn]->attack);
+  //主动攻击
+  int f_atk = warr[turn]->attack;
+  int lion_hp = 0;
+  if (warr[1 - turn]->type == LION)
+    lion_hp = warr[1 - turn]->hp;
+  if (warr[turn]->_sword != NULL)
+  { //有剑
+    f_atk += warr[turn]->_sword->get_force();
+    warr[turn]->_sword->used();
+    if (warr[turn]->_sword->durability())
+    {
+      delete warr[turn]->_sword;
+      warr[turn]->_sword = NULL;
+    }
+  }
+  warr[1 - turn]->hp -= f_atk;
+  if (warr[1 - turn]->hp <= 0)
+  {
+    printf("%03d:40 %s %s %d was killed in city %d\n", now_time, part[1 - turn], arms[warr[1 - turn]->type], warr[1 - turn]->id, id);
+    win(turn, turn, lion_hp);
+    return;
+  }
+  if (warr[1 - turn]->type != NINJIA) //反击
+  {
+    int s_atk = warr[1 - turn]->attack / 2;
+    if (warr[turn]->type == LION)
+      lion_hp = warr[turn]->hp;
+    if (warr[1 - turn]->_sword != NULL)
+    { //有剑
+      s_atk += warr[1 - turn]->_sword->get_force();
+      warr[1 - turn]->_sword->used();
+      if (warr[1 - turn]->_sword->durability())
+      {
+        delete warr[1 - turn]->_sword;
+        warr[1 - turn]->_sword = NULL;
+      }
+    }
+    warr[turn]->hp -= s_atk;
+    if (warr[turn]->hp <= 0)
+    {
+      printf("%03d:40 %s %s %d was killed in city %d\n", now_time, part[turn], arms[warr[turn]->type], warr[turn]->id, id);
+      win(1 - turn, turn, lion_hp);
+      return;
+    }
+  }
+  draw(turn);
+}
+void citys::award()
+{
+  for (int i = 0; i <= 1; i++)
+    if (warr[i]!=NULL&&warr[i]->is_winner && total[i] >= 8)
+    {
+      total[i] -= 8;
+      warr[i]->hp += 8;
+    }
+  if (winner == last_winner)
+    color = winner;
 }
 
 int main()
@@ -435,7 +572,7 @@ int main()
       }
       else
         break;
-      if (game_over)
+      if (game_over) //游戏结束
         break;
       if (now_min + 10 <= total_min) //产出生命;
       {
@@ -460,18 +597,23 @@ int main()
       }
       else
         break;
-      if (now_min + 3 <= total_min)//使用炸弹;
+      if (now_min + 3 <= total_min) //使用炸弹;
       {
         now_min += 3;
         use_bomb();
-      } 
+      }
       else
         break;
       if (now_min + 2 <= total_min)
       {
         now_min += 2;
-        cout << now_min << endl
-             << "henduo" << endl;
+        for (int i = 1; i <= city_num; i++)
+          city[i].ttk();
+        for (int i = 1; i <= city_num; i++)
+          city[i].award();
+        for (int i = 0; i <= 2; i++)
+          total[i] += temp_life[i];
+
       } //主动进攻，反击，战死，欢呼，获取生命，升旗;
       else
         break;
