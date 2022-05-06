@@ -43507,8 +43507,7 @@ Its morale is 8.91
 022:10 blue iceman 19 marched to city 16 with 98 elements and force 42
 022:10 red lion 7 marched to city 17 with 21 elements and force 4
 022:10 blue wolf 20 marched to city 17 with 5 elements and force 3
-022:10 blue l请按任意键继续. . . 
-ion 21 marched to city 18 with 94 elements and force 4
+022:10 blue lion 21 marched to city 18 with 94 elements and force 4
 022:10 red dragon 5 marched to city 19 with 51 elements and force 1
 022:10 blue dragon 22 marched to city 19 with 100 elements and force 1
 022:10 red ninja 4 marched to city 20 with 76 elements and force 3

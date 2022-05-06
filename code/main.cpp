@@ -433,7 +433,7 @@ void citys::win(int winner_color, int turn, int lion_hp)
   temp_life[winner_color] += life;
   life = 0;
   winner = winner_color;
-  if (winner == last_winner&&winner!=-1&&color!=winner){
+  if ((winner == last_winner)&&(winner!=-1)&&(color!=winner)){
     color = winner;
     printf("%03d:40 %s flag raised in city %d\n",now_time,part[winner],id);
   }
@@ -634,7 +634,7 @@ int main()
           city[i].ttk();
         for (int i = 1; i <= city_num; i++)
           city[i].award();
-        for (int i = 0; i <= 2; i++)
+        for (int i = 0; i <= 1; i++)
           total[i] += temp_life[i],temp_life[i]=0;
 
       } //主动进攻，反击，战死，欢呼，获取生命，升旗;
